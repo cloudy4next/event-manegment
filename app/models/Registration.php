@@ -74,7 +74,14 @@ class Registration
     }
     
 
-
+    public static function getByEventId($event_id)
+    {
+        $pdo = getPDO(); 
+        $stmt = $pdo->prepare("SELECT * FROM registrations WHERE event_id = ?");
+        $stmt->execute([$event_id]);
+    
+        return $stmt->fetchAll(PDO::FETCH_ASSOC); 
+    }
 
 
 }

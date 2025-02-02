@@ -98,4 +98,65 @@ class EventController extends BaseController
         }
         $this->render('events/view', ['event' => $event]);
     }
+
+
+    private function getSingleEventDetail($id)
+    {
+        return Event::findById($id);
+    }
+
+    public function getEventDetails($event_id)
+    {
+        $event = $this->getSingleEventDetail($event_id);
+
+        if (!$event) {
+            http_response_code(404); // Not Found
+            echo json_encode(['error' => 'Event not found']);
+            exit;
+        }
+
+        echo json_encode([
+            'id' => $event['id'],
+            'name' => $event['name'],
+            'event_date' => $event['event_date'],
+            'location' => $event['location'],
+            'description' => $event['description']
+        ]);
+        exit;
+    }
+
+
+    public function getEventDetailsWithAttendance($event_id)
+    {
+        $event = $this->getSingleEventDetail($event_id);
+
+        if (!$event) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Event not found']);
+            exit;
+        }
+
+        $registrations = Registration::getByEventId($event_id);
+
+        $attendees = array_map(function ($registration) {
+            return [
+                'name' => $registration['name'],
+                'email' => $registration['email'],
+                'address' => $registration['address'],
+                'mobile' => $registration['mobile']
+            ];
+        }, $registrations);
+
+        echo json_encode([
+            'id' => $event['id'],
+            'name' => $event['name'],
+            'event_date' => $event['event_date'],
+            'location' => $event['location'],
+            'description' => $event['description'],
+            'attendees' => $attendees
+        ]);
+
+        exit;
+    }
+
 }

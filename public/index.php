@@ -86,6 +86,14 @@ switch ($url) {
         $controller = new RegistrationController();
         $controller->listRegistrations($matches[1], $matches[2]);
         break;
+    case (preg_match('/^api\/event\/([0-9]+)$/', $url, $matches) ? true : false):
+        $controller = new EventController();
+        $controller->getEventDetails($matches[1]);
+        break;
+    case (preg_match('/^api\/event\/([0-9]+)\/attendance$/', $url, $matches) ? true : false):
+        $controller = new EventController();
+        $controller->getEventDetailsWithAttendance($matches[1]);
+        break;
     default:
         echo "404 Not Found";
         break;
